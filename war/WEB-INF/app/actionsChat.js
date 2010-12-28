@@ -118,7 +118,7 @@ exports.flush = function(request) {
 };
 
 exports.reset = function(request) {
-	singletonChannel = chatServer.addChannel({basePath: "/chat"});
-	singletonChannel.expireOldSessions();
+	var channel = channelSingleton.reset();
+	channel.expireOldSessions();
 	return Response.redirect('/');
 };

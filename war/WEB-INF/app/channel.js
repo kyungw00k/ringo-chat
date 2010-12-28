@@ -35,6 +35,13 @@ extend(Channel.prototype, {
 		}
 		return this;
 	},
+	reset : function() {
+		this.nextMessageId = 0;
+		this.messages = [];
+		this.callbacks = [];
+		this.sessions = {};
+		return this;
+	},
 	serialize : function () {
 		return JSON.stringify({
 			nextMessageId : this.nextMessageId,
@@ -136,7 +143,6 @@ extend(Channel.prototype, {
 		}
 		var eventId = this.appendMessage(this.sessions[id].nick, "part");
 		delete this.sessions[id];
-		memcache.set("ringo-channel-info", this.serialize());
 		return eventId;
 	},
 	
@@ -144,10 +150,10 @@ extend(Channel.prototype, {
 		var now = (new Date()).getTime();
 		for (var session in this.sessions) {
 			if (now - this.sessions[session].timestamp > this.sessionTimeout) {
-//				sys.print("Destroy Session");
 				this.destroySession(session);
 			}
 		}
+		memcache.set("ringo-channel-info", this.serialize());
 	}
 });
 

@@ -110,6 +110,9 @@ $.extend(Channel.prototype, {
 						channel.handlePollError();
 					}
 				};
+				channel.socket.onerror = function() {
+					alert("Error");
+				};
 				channel.socket.onclose = function() {
 					channel.part();
 				};
