@@ -125,6 +125,13 @@ exports.flush = function(request) {
 	var channel = getChannel();
 	channel.expireOldSessions();
 	memcache.set("ringo-channel-info", channel.serialize()); // Memorized Previous Data to Memcache
-	taskqueue.add({url: "/chat/flush", method: "GET", countdown : 1000 });
+	taskqueue.add({url: "/chat/flush", method: "GET", countdown : 1000, eta : 1000 });
 	return Response.json({ message : "ok" });
+};
+
+exports.reset = function(request) {
+	singletonChannel = chatServer.addChannel({basePath: "/chat"});
+	singletonChannel.expireOldSessions();
+	memcache.set("ringo-channel-info", singletonChannel.serialize());
+	return Response.json({ message : singletonChannel.serialize() });
 };
