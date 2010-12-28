@@ -35,6 +35,7 @@ extend(Channel.prototype, {
 		}
 		return this;
 	},
+	
 	reset : function() {
 		this.nextMessageId = 0;
 		this.messages = [];
@@ -42,6 +43,7 @@ extend(Channel.prototype, {
 		this.sessions = {};
 		memcache.set("ringo-channel-info", this.serialize());
 	},
+	
 	serialize : function () {
 		return JSON.stringify({
 			nextMessageId : this.nextMessageId,
@@ -50,6 +52,7 @@ extend(Channel.prototype, {
 			sessions : this.sessions
 		});
 	},
+	
 	deserialize : function(data) {
 		var obj = eval("("+data+")");		
 		this.nextMessageId = obj.nextMessageId;
@@ -61,6 +64,7 @@ extend(Channel.prototype, {
 			this.sessions[key].deserialize(obj.sessions[key]);
 		}
 	},
+	
 	appendMessage: function(nick, type, text) {
 		var id = ++this.nextMessageId,
 			message = {
@@ -120,6 +124,7 @@ extend(Channel.prototype, {
 	},
 	
 	createSession: function(nick) {
+		this.expireOldSessions();
 		var session = new Session(nick);
 		if (!session) {
 			return;
@@ -154,7 +159,6 @@ extend(Channel.prototype, {
 			}
 		}
 		memcache.set("ringo-channel-info", this.serialize());
-		taskqueue.add({url: "/chat/flush", method: "POST", countdown : 500 });
 	}
 });
 

@@ -114,6 +114,7 @@ exports.flush = {
 	POST : function(request) {
 		var channel = channelSingleton.fetchFromMemcache();
 		channel.expireOldSessions();
+		taskqueue.add({url: "/chat/flush", method: "POST", countdown : 1000 });
 		return Response.json({ message : "ok" });
 	}		
 };
