@@ -98,8 +98,8 @@ $.extend(Channel.prototype, {
 				
 				channel.socket.onmessage = function(evt) {
 					var data = eval('(' + evt.data + ')')
-					console.log(evt);
-					console.log(evt.data);
+//					console.log(evt);
+//					console.log(evt.data);
 					if (data) {
 						channel.handlePoll(data);
 					} else {
@@ -107,8 +107,6 @@ $.extend(Channel.prototype, {
 					}
 				};
 				channel.socket.onclose = channel.part;
-
-				console.log(data);
 				(options.success || $.noop)();
 			},
 			error: options.error || $.noop

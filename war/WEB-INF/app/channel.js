@@ -1,7 +1,8 @@
 var EventEmitter = require("ringo/events").EventEmitter,
 	Session = require("./session").Session,
 	channelService = require('google/appengine/api/channel'),
-	taskqueue = require('google/appengine/api/taskqueue');
+	taskqueue = require('google/appengine/api/taskqueue'),
+	sys = require('system');
 
 function Channel(options) {
 	EventEmitter.call(this);
@@ -27,22 +28,23 @@ inherits(Channel, EventEmitter);
 
 extend(Channel.prototype, {
 	serialize : function () {
-		return {
+		return JSON.stringify({
 			nextMessageId : this.nextMessageId,
 			messages : this.messages,
 			callbacks : this.callbacks,
 			sessions : this.sessions
-		};
+		});
 	},
-	deserialize : function(obj) {
-		sys.print("Fetch from memcache");
-		
+	deserialize : function(data) {
+		var obj = eval("("+data+")");		
 		this.nextMessageId = obj.nextMessageId;
 		this.messages = obj.messages;
 		this.callbacks = obj.callbacks;
-		this.sessions = obj.sessions;
 		
-		return this;
+		for( var key in obj.sessions ) {
+			this.sessions[key] = new Session(obj.sessions[key].nick);
+			this.sessions[key].deserialize(obj.sessions[key]);
+		}
 	},
 	appendMessage: function(nick, type, text) {
 		var id = ++this.nextMessageId,
@@ -102,9 +104,6 @@ extend(Channel.prototype, {
 	},
 	
 	createSession: function(nick) {
-		this.flushCallbacks();
-		this.expireOldSessions();
-
 		var session = new Session(nick);
 		if (!session) {
 			return;

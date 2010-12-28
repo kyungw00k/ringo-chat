@@ -3,6 +3,7 @@ var {Response} = require('ringo/webapp/response'),
 	taskqueue = require('google/appengine/api/taskqueue'),
 	sys = require('system'),
 	chat = require('./server'),
+	Session = require('./session'),
 	memcache = require("google/appengine/api/memcache");
 
 /*
@@ -15,33 +16,39 @@ Response.jsons = function (status, object) {
     return res;
 };
 
-var cache = memcache.get("chatServer"),
-	chatServer = chat.createServer(cache);
-if ( !cache) {
-	memcache.set("chatServer", chatServer.serialize()); // Memorized Previous Data to Memcache
-}
+var singletonChannel = chat.createServer().addChannel({basePath: "/chat"});
 
 /*
- * Create Channel
+ * Set Channel Listener
  */
-var channel = chatServer.addChannel({
-	basePath: "/chat"
-}).addListener("msg", function(msg) {
-	memcache.set("chatServer", chatServer.serialize()); // Memorized Previous Data to Memcache
+singletonChannel.addListener("msg", function(msg) {
+	memcache.set("channelInfo", singletonChannel.serialize()); // Memorized Previous Data to Memcache
 	sys.print("<" + msg.nick + "> " + msg.text);
 }).addListener("join", function(msg) {
-	memcache.set("chatServer", chatServer.serialize()); // Memorized Previous Data to Memcache
+	memcache.set("channelInfo", singletonChannel.serialize()); // Memorized Previous Data to Memcache
 	sys.print("<" + msg.nick + "> join");
 }).addListener("part", function(msg) {
-	memcache.set("chatServer", chatServer.serialize()); // Memorized Previous Data to Memcache
+	memcache.set("channelInfo", singletonChannel.serialize()); // Memorized Previous Data to Memcache
 	sys.print("<" + msg.nick + "> part");
 });
+
+function getChannel() {
+	var channelCache = memcache.get("channelInfo");
+	
+	if ( !channelCache ) {
+		memcache.set("channelInfo", singletonChannel.serialize());
+	} else {
+		singletonChannel.deserialize(channelCache);
+	}	
+	return singletonChannel;
+}
 
 /*
  * Routing
  */
 exports.who = function(request) {
-	var nicks = [];
+	var nicks = [],
+		channel = getChannel();
 	for (var id in channel.sessions) {
 		nicks.push(channel.sessions[id].nick);
 	}
@@ -50,7 +57,7 @@ exports.who = function(request) {
 
 exports.part = function(request) {
 	var id = request.queryParams.id;
-	var eventId = channel.destroySession(id);
+	var eventId = getChannel().destroySession(id);
 	return Response.json({ id: eventId });
 };
 
@@ -61,7 +68,7 @@ exports.join = {
 		if (!nick) {
 			return Response.jsons(400, { error: "bad nick." });
 		}
-		var session = channel.createSession(nick);
+		var session = getChannel().createSession(nick);
 		if (!session) {
 			return Response.jsons(400, { error: "nick in use." });
 		}
@@ -72,10 +79,8 @@ exports.join = {
 };
 
 exports.recv = function(request) {
-	channel.flushCallbacks();
-	channel.expireOldSessions();
-	
-	var query = request.queryParams,
+	var channel = getChannel(),
+		query = request.queryParams,
 		since = parseInt(query.since, 10),
 		session = channel.sessions[query.id],
 		messageObj = channel.messages;
@@ -87,6 +92,7 @@ exports.recv = function(request) {
 	if (isNaN(since)) {
 		return Response.jsons(400, { error: "Must supply since parameter." });
 	}
+	
 	session.poke();
 	
 	if ( messageObj == null ) {
@@ -96,8 +102,9 @@ exports.recv = function(request) {
 };
 
 exports.send = {
-	POST : function(request) {	
-		var query = request.postParams,
+	POST : function(request) {
+		var channel = getChannel(),
+			query = request.postParams,
 			since = parseInt(query.since, 10),
 			text = query.text,
 			session = channel.sessions[query.id];
@@ -117,6 +124,7 @@ exports.send = {
 };
 
 exports.flush = function(request) {
+	var channel = getChannel();
 	channel.flushCallbacks();
 	channel.expireOldSessions();
 	taskqueue.add({url: "/chat/flush", method: "GET", eta : 2000});

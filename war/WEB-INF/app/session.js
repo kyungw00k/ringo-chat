@@ -16,4 +16,11 @@ Session.prototype.poke = function() {
 	this.timestamp = new Date();
 };
 
+Session.prototype.deserialize = function (obj) {
+	this.token = obj.token;
+	this.nick = obj.nick;
+	this.id = obj.id;
+	this.timestamp = obj.timestamp;
+};
+
 exports.Session = Session;
