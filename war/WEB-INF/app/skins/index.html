@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>RingoChat</title>
+  
+  <link rel="stylesheet" type="text/css" href="css/layout.css">
+  <script type="text/javascript" src="/_ah/channel/jsapi"></script>
+  <script src="js/jquery-1.4.2.js"></script>
+  <script src="js/ringochat.js"></script>
+  <script src="js/client.js"></script>
+</head>
+<body class="login">
+  <header><!--<img src="images/node-chat.png" width="71" height="10" alt="Ringo Chat" />--></header>
+  
+  <form id="login">
+    <h1>Welcome to Ringo-<strong>Chat</strong></h1>
+    <p>
+      <label for="nick">Please choose a nickname:</label>
+      <input type="text" id="nick" maxlength="50" autocomplete="off" />
+    </p>
+  </form>
+  
+  <section id="channel">
+    
+    <section id="frame">
+      <div id="chat-log">
+      </div>
+    </section>
+    
+    <ul id="users" class="button_list">
+    </ul>
+    
+    <form id="entry">
+      <fieldset>
+        <p><input type="text" name="message" value="" autocomplete="off" id="message" /></p>
+        <input type="submit" value="Send" id="Send" />
+      </fieldset>
+    </form>
+    
+    <footer>
+      <p class="credits">
+        Ringo.js + jQuery Chat Demo by <a href="https://github.com/kyungw00k/ringo-chat">Kyungwook Park</a> (For NodeJS User : <a href="http://scottgonzalez.com">Scott González</a>) <span class="pipe">|</span>
+        User Interface by <a href="http://dougneiner.com">Doug Neiner</a>
+      </p>
+    </footer>
+    
+  </section>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-20092249-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body>
+</html>
