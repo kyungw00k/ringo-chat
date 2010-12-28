@@ -88,6 +88,9 @@ $.extend(Channel.prototype, {
 				}
 				channel.id = data.id;
 				channel.since = data.since;
+
+				var message = $("#message");
+				message.val("Connecting....").attr("disabled", true);
 				/*
 				 * AppEngine Channel 
 				 */
@@ -95,9 +98,9 @@ $.extend(Channel.prototype, {
 				channel.socket = channel.gae_channel.open();
 				
 				channel.socket.onopen = function () {
+					message.val("").removeAttr("disabled").focus();
 					channel.poll();
 				};
-				
 				channel.socket.onmessage = function(evt) {
 					var data = eval('(' + evt.data + ')')
 
@@ -107,7 +110,10 @@ $.extend(Channel.prototype, {
 						channel.handlePollError();
 					}
 				};
-				channel.socket.onclose = channel.part;
+				channel.socket.onclose = function() {
+					channel.part();
+				};
+				
 				(options.success || $.noop)();
 			},
 			error: options.error || $.noop
