@@ -19,9 +19,6 @@ function Channel(options) {
 	this.messages = [];
 	this.callbacks = [];
 	this.sessions = {};
-	
-	var channel = this;
-	taskqueue.add({url: "/chat/flush", method: "GET", eta : 2000});
 }
 
 inherits(Channel, EventEmitter);

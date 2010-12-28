@@ -6,6 +6,8 @@ var {Response} = require('ringo/webapp/response'),
 	Session = require('./session'),
 	memcache = require("google/appengine/api/memcache");
 
+taskqueue.add({url: "/chat/flush", method: "GET", eta : 5000});
+
 /*
  * Response.json with Status Code
  */
@@ -127,6 +129,6 @@ exports.flush = function(request) {
 	var channel = getChannel();
 	channel.flushCallbacks();
 	channel.expireOldSessions();
-	taskqueue.add({url: "/chat/flush", method: "GET", eta : 2000});
+	taskqueue.add({url: "/chat/flush", method: "GET", eta : 1000});
 	return Response.json({ message : "ok" });
 };
