@@ -113,7 +113,7 @@ exports.send = {
 exports.flush = function(request) {
 	var channel = channelSingleton.fetchFromMemcache();
 	channel.expireOldSessions();
-	taskqueue.add({url: "/chat/flush", method: "GET", countdown : 500, eta : 500 });
+	taskqueue.add({url: "/chat/flush", method: "GET", countdown : 1000 });
 	return Response.json({ message : "ok" });
 };
 

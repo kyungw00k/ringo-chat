@@ -36,4 +36,4 @@ exports.charset = 'UTF-8';
 exports.contentType = 'text/html';
 
 var taskqueue = require('google/appengine/api/taskqueue');
-taskqueue.add({url: "/chat/flush", method: "GET", countdown : 500, eta : 500 });
+taskqueue.add({url: "/chat/flush", method: "GET", countdown : 1000 });
