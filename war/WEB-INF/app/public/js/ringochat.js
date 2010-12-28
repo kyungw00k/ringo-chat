@@ -88,7 +88,6 @@ $.extend(Channel.prototype, {
 				}
 				
 				channel.id = data.id;
-				channel.poll();
 				
 				/*
 				 * AppEngine Channel 
@@ -96,10 +95,13 @@ $.extend(Channel.prototype, {
 				channel.gae_channel = new goog.appengine.Channel(data.channel_id),
 				channel.socket = channel.gae_channel.open();
 				
+				channel.socket.onopen = function () {
+					channel.poll();
+				};
+				
 				channel.socket.onmessage = function(evt) {
 					var data = eval('(' + evt.data + ')')
-//					console.log(evt);
-//					console.log(evt.data);
+
 					if (data) {
 						channel.handlePoll(data);
 					} else {

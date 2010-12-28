@@ -1,8 +1,6 @@
-Ringo-Chat
+RingoChat
 ===================
-
-Ringo-Chat
-Ringo-Chat is a simple, scalable web-based chat server built on Ringo.js + AppengineJS.
+RingoChat is a simple, scalable web-based chat server built on Ringo.js + AppengineJS.
 [https://github.com/scottgonzalez/node-chat](Just the clone version of NodeChat)
 
 Quick start

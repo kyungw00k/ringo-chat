@@ -6,8 +6,6 @@ var {Response} = require('ringo/webapp/response'),
 	Session = require('./session'),
 	memcache = require("google/appengine/api/memcache");
 
-taskqueue.add({url: "/chat/flush", method: "GET", eta : 5000});
-
 /*
  * Response.json with Status Code
  */
@@ -18,27 +16,25 @@ Response.jsons = function (status, object) {
     return res;
 };
 
-var singletonChannel = chat.createServer().addChannel({basePath: "/chat"});
+var chatServer = chat.createServer(),
+	singletonChannel = chatServer.addChannel({basePath: "/chat"});
 
 /*
  * Set Channel Listener
  */
 singletonChannel.addListener("msg", function(msg) {
-	memcache.set("channelInfo", singletonChannel.serialize()); // Memorized Previous Data to Memcache
 	sys.print("<" + msg.nick + "> " + msg.text);
 }).addListener("join", function(msg) {
-	memcache.set("channelInfo", singletonChannel.serialize()); // Memorized Previous Data to Memcache
 	sys.print("<" + msg.nick + "> join");
 }).addListener("part", function(msg) {
-	memcache.set("channelInfo", singletonChannel.serialize()); // Memorized Previous Data to Memcache
 	sys.print("<" + msg.nick + "> part");
 });
 
 function getChannel() {
-	var channelCache = memcache.get("channelInfo");
+	var channelCache = memcache.get("ringo-channel-info");
 	
 	if ( !channelCache ) {
-		memcache.set("channelInfo", singletonChannel.serialize());
+		memcache.set("ringo-channel-info", singletonChannel.serialize());
 	} else {
 		singletonChannel.deserialize(channelCache);
 	}	
@@ -127,8 +123,8 @@ exports.send = {
 
 exports.flush = function(request) {
 	var channel = getChannel();
-	channel.flushCallbacks();
 	channel.expireOldSessions();
-	taskqueue.add({url: "/chat/flush", method: "GET", eta : 1000});
+	memcache.set("ringo-channel-info", channel.serialize()); // Memorized Previous Data to Memcache
+	taskqueue.add({url: "/chat/flush", method: "GET", countdown : 1000 });
 	return Response.json({ message : "ok" });
 };

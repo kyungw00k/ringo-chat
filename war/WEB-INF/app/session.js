@@ -9,11 +9,11 @@ function Session(nick) {
 	this.token = null;
 	this.nick = nick;
 	this.id = Math.floor(Math.random() * 1e10).toString();
-	this.timestamp = new Date();
+	this.timestamp = (new Date()).getTime();
 }
 
 Session.prototype.poke = function() {
-	this.timestamp = new Date();
+	this.timestamp = (new Date()).getTime();
 };
 
 Session.prototype.deserialize = function (obj) {

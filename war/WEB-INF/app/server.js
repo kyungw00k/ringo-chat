@@ -41,7 +41,7 @@ function extend(obj, props) {
 
 exports.createServer = function(obj) {
 	var server = new Server();
-	if (obj && typeof cache == "String") {
+	if (obj) {
 		server.deserialize(obj);
 	}
 	return server;

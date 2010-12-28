@@ -87,14 +87,14 @@ extend(Channel.prototype, {
 			callback(matching);
 		} else {
 			this.callbacks.push({
-				timestamp: new Date(),
+				timestamp: (new Date()).getTime(),
 				callback: callback
 			});
 		}
 	},
 	
 	flushCallbacks: function() {
-		var now = new Date();
+		var now = (new Date()).getTime();
 		while (this.callbacks.length && now - this.callbacks[0].timestamp > this.sessionTimeout * 0.75) {
 			this.callbacks.shift().callback([]);
 		}
@@ -122,16 +122,16 @@ extend(Channel.prototype, {
 		if (!id || !this.sessions[id]) {
 			return false;
 		}
-		
 		var eventId = this.appendMessage(this.sessions[id].nick, "part");
 		delete this.sessions[id];
 		return eventId;
 	},
 	
 	expireOldSessions: function() {
-		var now = new Date();
+		var now = (new Date()).getTime();
 		for (var session in this.sessions) {
 			if (now - this.sessions[session].timestamp > this.sessionTimeout) {
+				sys.print("Destroy Session");
 				this.destroySession(session);
 			}
 		}
