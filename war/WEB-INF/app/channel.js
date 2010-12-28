@@ -41,7 +41,6 @@ extend(Channel.prototype, {
 		this.callbacks = [];
 		this.sessions = {};
 		memcache.set("ringo-channel-info", this.serialize());
-		return this;
 	},
 	serialize : function () {
 		return JSON.stringify({
@@ -155,7 +154,7 @@ extend(Channel.prototype, {
 			}
 		}
 		memcache.set("ringo-channel-info", this.serialize());
-		taskqueue.add({url: "/chat/flush", method: "GET", countdown : 1000 });
+		taskqueue.add({url: "/chat/flush", method: "POST", countdown : 500 });
 	}
 });
 

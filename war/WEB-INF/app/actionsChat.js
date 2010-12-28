@@ -3,6 +3,7 @@ var {Response} = require('ringo/webapp/response'),
 	sys = require('system'),
 	chat = require('./server'),
 	Session = require('./session'),
+	taskqueue = require('google/appengine/api/taskqueue'),
 	memcache = require("google/appengine/api/memcache");
 
 /*
@@ -109,13 +110,16 @@ exports.send = {
 	}
 };
 
-exports.flush = function(request) {
-	var channel = channelSingleton.fetchFromMemcache();
-	channel.expireOldSessions();
-	return Response.json({ message : "ok" });
+exports.flush = {
+	POST : function(request) {
+		var channel = channelSingleton.fetchFromMemcache();
+		channel.expireOldSessions();
+		return Response.json({ message : "ok" });
+	}		
 };
 
 exports.reset = function(request) {
-	var channel = channelSingleton.reset();
+	var channel = channelSingleton.fetchFromMemcache();
+	channel.reset();
 	return Response.redirect('/');
 };
