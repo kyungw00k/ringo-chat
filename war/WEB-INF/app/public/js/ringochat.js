@@ -88,6 +88,7 @@ $.extend(Channel.prototype, {
 				}
 				channel.id = data.id;
 				channel.since = data.since;
+				channel.poll();
 
 				var message = $("#message");
 				message.val("Connecting....").attr("disabled", true);
@@ -99,7 +100,6 @@ $.extend(Channel.prototype, {
 				
 				channel.socket.onopen = function () {
 					message.val("").removeAttr("disabled").focus();
-					channel.poll();
 				};
 				channel.socket.onmessage = function(evt) {
 					var data = eval('(' + evt.data + ')')
@@ -111,7 +111,7 @@ $.extend(Channel.prototype, {
 					}
 				};
 				channel.socket.onerror = function() {
-					alert("Error");
+					alert("[Channel API] Error");
 				};
 				channel.socket.onclose = function() {
 					channel.part();
