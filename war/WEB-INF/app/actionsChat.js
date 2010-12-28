@@ -1,6 +1,5 @@
 var {Response} = require('ringo/webapp/response'),
 	Channel = require('./channel').Channel,
-	taskqueue = require('google/appengine/api/taskqueue'),
 	sys = require('system'),
 	chat = require('./server'),
 	Session = require('./session'),
@@ -113,12 +112,10 @@ exports.send = {
 exports.flush = function(request) {
 	var channel = channelSingleton.fetchFromMemcache();
 	channel.expireOldSessions();
-	taskqueue.add({url: "/chat/flush", method: "GET", countdown : 1000 });
 	return Response.json({ message : "ok" });
 };
 
 exports.reset = function(request) {
 	var channel = channelSingleton.reset();
-	channel.expireOldSessions();
 	return Response.redirect('/');
 };

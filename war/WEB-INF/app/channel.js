@@ -40,6 +40,7 @@ extend(Channel.prototype, {
 		this.messages = [];
 		this.callbacks = [];
 		this.sessions = {};
+		memcache.set("ringo-channel-info", this.serialize());
 		return this;
 	},
 	serialize : function () {
@@ -154,6 +155,7 @@ extend(Channel.prototype, {
 			}
 		}
 		memcache.set("ringo-channel-info", this.serialize());
+		taskqueue.add({url: "/chat/flush", method: "GET", countdown : 1000 });
 	}
 });
 
