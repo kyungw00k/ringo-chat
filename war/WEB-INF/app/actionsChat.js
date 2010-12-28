@@ -17,12 +17,12 @@ Response.jsons = function (status, object) {
 };
 
 var chatServer = chat.createServer(),
-	singletonChannel = chatServer.addChannel({basePath: "/chat"});
+	channelSingleton = chatServer.addChannel({basePath: "/chat"});
 
 /*
  * Set Channel Listener
  */
-singletonChannel.addListener("msg", function(msg) {
+channelSingleton.addListener("msg", function(msg) {
 	sys.print("<" + msg.nick + "> " + msg.text);
 }).addListener("join", function(msg) {
 	sys.print("<" + msg.nick + "> join");
@@ -30,23 +30,12 @@ singletonChannel.addListener("msg", function(msg) {
 	sys.print("<" + msg.nick + "> part");
 });
 
-function getChannel() {
-	var channelCache = memcache.get("ringo-channel-info");
-	
-	if ( !channelCache ) {
-		memcache.set("ringo-channel-info", singletonChannel.serialize());
-	} else {
-		singletonChannel.deserialize(channelCache);
-	}	
-	return singletonChannel;
-}
-
 /*
  * Routing
  */
 exports.who = function(request) {
 	var nicks = [],
-		channel = getChannel();
+		channel = channelSingleton.fetchFromMemcache();
 	for (var id in channel.sessions) {
 		nicks.push(channel.sessions[id].nick);
 	}
@@ -55,7 +44,7 @@ exports.who = function(request) {
 
 exports.part = function(request) {
 	var id = request.queryParams.id;
-	var eventId = getChannel().destroySession(id);
+	var eventId = channelSingleton.fetchFromMemcache().destroySession(id);
 	return Response.json({ id: eventId });
 };
 
@@ -66,7 +55,7 @@ exports.join = {
 		if (!nick) {
 			return Response.jsons(400, { error: "bad nick." });
 		}
-		var session = getChannel().createSession(nick);
+		var session = channelSingleton.fetchFromMemcache().createSession(nick);
 		if (!session) {
 			return Response.jsons(400, { error: "nick in use." });
 		}
@@ -77,7 +66,7 @@ exports.join = {
 };
 
 exports.recv = function(request) {
-	var channel = getChannel(),
+	var channel = channelSingleton.fetchFromMemcache(),
 		query = request.queryParams,
 		since = parseInt(query.since, 10),
 		session = channel.sessions[query.id],
@@ -101,7 +90,7 @@ exports.recv = function(request) {
 
 exports.send = {
 	POST : function(request) {
-		var channel = getChannel(),
+		var channel = channelSingleton.fetchFromMemcache(),
 			query = request.postParams,
 			since = parseInt(query.since, 10),
 			text = query.text,
@@ -122,16 +111,14 @@ exports.send = {
 };
 
 exports.flush = function(request) {
-	var channel = getChannel();
+	var channel = channelSingleton.fetchFromMemcache();
 	channel.expireOldSessions();
-	memcache.set("ringo-channel-info", channel.serialize()); // Memorized Previous Data to Memcache
-	taskqueue.add({url: "/chat/flush", method: "GET", countdown : 1000, eta : 1000 });
+	taskqueue.add({url: "/chat/flush", method: "GET", countdown : 500, eta : 500 });
 	return Response.json({ message : "ok" });
 };
 
 exports.reset = function(request) {
 	singletonChannel = chatServer.addChannel({basePath: "/chat"});
 	singletonChannel.expireOldSessions();
-	memcache.set("ringo-channel-info", singletonChannel.serialize());
-	return Response.json({ message : singletonChannel.serialize() });
+	return Response.redirect('/');
 };

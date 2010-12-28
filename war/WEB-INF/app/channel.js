@@ -2,7 +2,8 @@ var EventEmitter = require("ringo/events").EventEmitter,
 	Session = require("./session").Session,
 	channelService = require('google/appengine/api/channel'),
 	taskqueue = require('google/appengine/api/taskqueue'),
-	sys = require('system');
+	sys = require('system'),
+	memcache = require("google/appengine/api/memcache");
 
 function Channel(options) {
 	EventEmitter.call(this);
@@ -24,6 +25,16 @@ function Channel(options) {
 inherits(Channel, EventEmitter);
 
 extend(Channel.prototype, {
+	fetchFromMemcache : function() {
+		var channelCache = memcache.get("ringo-channel-info");
+		
+		if ( !channelCache ) {
+			memcache.set("ringo-channel-info", this.serialize());
+		} else {
+			this.deserialize(channelCache);
+		}
+		return this;
+	},
 	serialize : function () {
 		return JSON.stringify({
 			nextMessageId : this.nextMessageId,
@@ -54,6 +65,7 @@ extend(Channel.prototype, {
 			};
 		this.messages.push(message);
 		this.emit(type, message);
+		memcache.set("ringo-channel-info", this.serialize());
 		
 		while (this.callbacks.length > 0) {
 			this.callbacks.shift().callback([message]);
@@ -63,7 +75,7 @@ extend(Channel.prototype, {
 			this.messages.shift();
 		}
 		var sessions = this.sessions;
-
+		
 		for ( var key in sessions ) {
 			if ( sessions[key] ) {
 				// sys.print("Send Message : "+JSON.stringify(message));
@@ -124,6 +136,7 @@ extend(Channel.prototype, {
 		}
 		var eventId = this.appendMessage(this.sessions[id].nick, "part");
 		delete this.sessions[id];
+		memcache.set("ringo-channel-info", this.serialize());
 		return eventId;
 	},
 	
@@ -131,7 +144,7 @@ extend(Channel.prototype, {
 		var now = (new Date()).getTime();
 		for (var session in this.sessions) {
 			if (now - this.sessions[session].timestamp > this.sessionTimeout) {
-				sys.print("Destroy Session");
+//				sys.print("Destroy Session");
 				this.destroySession(session);
 			}
 		}

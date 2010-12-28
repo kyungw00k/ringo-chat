@@ -86,9 +86,8 @@ $.extend(Channel.prototype, {
 					(options.error || $.noop)();
 					return;
 				}
-				
 				channel.id = data.id;
-				
+				channel.since = data.since;
 				/*
 				 * AppEngine Channel 
 				 */
