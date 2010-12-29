@@ -57,8 +57,11 @@ $.extend(Channel.prototype, {
 			$.each(data.messages, function(i, message) {
 				channel.lastMessageId = Math.max(channel.lastMessageId, message.id);
 				$(channel).triggerHandler(message.type, message);
-				if ( message.nick === channel.nick ) {
+				if ( message.type === "part" && message.nick === channel.nick ) {
+					console.log("logout");
 					channel.nick = null;
+					channel.socket.close();
+					channel.gae_channel = null;
 					window.location = '/';
 				}
 			});
@@ -118,8 +121,7 @@ $.extend(Channel.prototype, {
 				};
 				channel.socket.onclose = function() {
 					channel.nick = null;
-					alert("Session Timeout!");
-					message.val("Session Timeout!").attr("disabled", true);
+					message.val("Connection Close").attr("disabled", true);
 					window.location = '/';
 				};
 				
@@ -132,11 +134,7 @@ $.extend(Channel.prototype, {
 	part: function() {
 		if (!this.id) { return; }
 		this.request("/part", {
-			data: { id: this.id },
-			success: function(data) {
-				message.val("Closed Session").attr("disabled", true);
-				window.location = '/';
-			}
+			data: { id: this.id }
 		});
 		this.nick = null;
 	},
