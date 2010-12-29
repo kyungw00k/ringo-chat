@@ -1,13 +1,14 @@
 RingoChat
 ===================
 RingoChat is a simple, scalable web-based chat server built on Ringo.js + AppengineJS.
-[https://github.com/scottgonzalez/node-chat](Just the clone version of NodeChat)
+[(Just the clone version of NodeChat)](https://github.com/scottgonzalez/node-chat)
 
 Quick start
 ===========
 
 Download the [Google App Engine Java SDK](http://code.google.com/appengine/downloads.html) and make sure that the bin directory of the SDK (/path/to/appengine-java-sdk/bin) is in the path. You can start the example with:
     
+    $ git clone https://github.com/kyungw00k/ringo-chat.git
     $ cd ringo-chat
     $ dev_appserver.sh . 
 

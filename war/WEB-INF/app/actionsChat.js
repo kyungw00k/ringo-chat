@@ -117,7 +117,6 @@ exports.flush = {
 		return Response.json({ message : "ok" });
 	}		
 };
-
 exports.reset = function(request) {
 	var channel = channelSingleton.fetchFromMemcache();
 	channel.reset();

@@ -1,113 +1,102 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>RingoChat</title>
-  
-  <link rel="stylesheet" type="text/css" href="css/layout.css">
-  <script type="text/javascript" src="/_ah/channel/jsapi"></script>
-  <script type="text/javascript" src="js/jquery-1.4.2.js"></script>
-  <script type="text/javascript" src="js/ringochat.js"></script>
-  <script type="text/javascript" src="js/client.js"></script>
+	<meta charset="utf-8">
+	<title>RingoChat</title>
+	<link rel="stylesheet" type="text/css" href="css/layout.css">
+	<script type="text/javascript" src="/_ah/channel/jsapi"></script>
+	<script type="text/javascript" src="js/jquery-1.4.2.js"></script>
+	<script type="text/javascript" src="js/ringochat.js"></script>
+	<script type="text/javascript" src="js/client.js"></script>
 </head>
 <body class="login">
-<!--[if IE]>
-<div style="width: 600px;">
- <b style="overflow:hidden; font-size:1px; display:block;height:1px; margin:0 5px; background:#fff; color: inherit;"></b>
- <b style="background: #DDEEFF; color: inherit; overflow:hidden; font-size:1px; display:block;height:1px; border-style: solid; border-width: 0 1px; border-left-color: #fff; border-right:1px solid #eee; margin:0 3px; border-width:0 2px;"></b>
+	<!--[if (gte IE 6)&(lte IE 8)]>
+	<div style="width: 600px;margin:150px auto 0 auto">
+		<b style="overflow:hidden; font-size:1px; display:block;height:1px; margin:0 5px; background:#fff; color: inherit;"></b>
+		<b style="background: #DDEEFF; color: inherit; overflow:hidden; font-size:1px; display:block;height:1px; border-style: solid; border-width: 0 1px; border-left-color: #fff; border-right:1px solid #eee; margin:0 3px; border-width:0 2px;"></b>
+		<b style="background: #DDEEFF; color: inherit; overflow:hidden; font-size:1px; display:block;height:1px;border-style: solid; border-width: 0 1px;border-left-color: #fff;border-right:1px solid #ddd;margin:0 2px;"></b>
+		<b style="background: #DDEEFF; color: inherit; overflow:hidden; font-size:1px; display:block;border-style: solid; border-width: 0 1px; border-left-color: #fff; border-right:1px solid #aaa;margin:0 1px; height:2px;"></b>
+		<div style="background: #DDEEFF; color: inherit; padding: 0 4px; display:block;border-style: solid; border-width: 0 1px;border-left-color: #fff;border-right-color: #999;">
+			<b style="height:1px; display:block; font-size:1px;"></b>
+			<div style="text-align: center; font-size: 18px; padding: 7px;">
+				To use this site properly you must use one of the following browsers:	
+			</div>
+			<div style="width: 100%;">
+				<center>
+				<table>
+					<tr>
+						<td style="text-align: center; padding: 5px;">
+							<a href="http://www.getfirefox.com" style="font-size: 16px;"><img src="http://www.envoymediagroup.com/cms-images/browsers/firefox.png" border="0"></a><br><a href="http://www.getfirefox.com" style="font-size: 16px;">Firefox</a>
+						</td>
+						<td style="text-align: center; padding: 5px;">
+							<a href="http://www.google.com/chrome" style="font-size: 16px;"><img src="http://www.envoymediagroup.com/cms-images/browsers/chrome.png" border="0"></a><br><a href="http://www.google.com/chrome" style="font-size: 16px;">Chrome</a>
+						</td>
+						<td style="text-align: center; padding: 5px;">
+			
+							<a href="http://www.apple.com/safari/download/" style="font-size: 16px;"><img src="http://www.envoymediagroup.com/cms-images/browsers/safari.png" border="0"></a><br><a href="http://www.apple.com/safari/download/" style="font-size: 16px;">Safari</a>
+						</td>
+					</tr>
+				</table>
+				</center>
+			</div>
+			<div style="text-align: center; padding: 7px;"><img src="http://www.envoymediagroup.com/cms-images/browsers/no_ie.png" alt="Don't use Internet Explorer" width="128" border="0"></div>
+			<div style="text-align: center; font-size: 14px; padding: 7px;">
+				If you would like to continue at your own peril, go ahead.	
+			</div>
+			<b style="height:1px; display:block; font-size:1px;"></b>
+		</div>
+		<b style="background: #DDEEFF; color: inherit; overflow:hidden; font-size:1px; display:block;border-style: solid; border-width: 0 1px;border-right-color: #999;border-left:1px solid #eee; margin:0 1px; height:2px;"></b>
+		<b style="background: #DDEEFF; color: inherit; overflow:hidden; font-size:1px; display:block;height:1px;border-style: solid; border-width: 0 1px;border-right-color: #999;border-left:1px solid #ddd; margin:0 2px;"></b>
+		<b style="background: #DDEEFF; color: inherit; overflow:hidden; font-size:1px; display:block;height:1px;border-style: solid; border-width: 0 1px;border-right-color: #999;border-left:1px solid #aaa;margin:0 3px; border-width:0 2px;"></b>
+		<b style="overflow:hidden; font-size:1px; display:block;height:1px;margin:0 5px; background:#999; color: inherit;"></b>
+	</div>
+	<![endif]-->
+	<![if !IE]>
+	<header>RingoChat</header>
+	
+	<form id="login">
+		<h1>Welcome to Ringo-<strong>Chat</strong></h1>
+		<p>
+			<label for="nick">Please choose a nickname:</label>
+			<input type="text" id="nick" maxlength="50" autocomplete="off" />
+		</p>
+	</form>
+	
+	<section id="channel">
+		
+		<section id="frame">
+			<div id="chat-log">
+			</div>
+		</section>
+		
+		<ul id="users" class="button_list">
+		</ul>
+		
+		<form id="entry">
+			<fieldset>
+				<p><input type="text" name="message" value="" autocomplete="off" id="message" /></p>
+				<input type="submit" value="Send" id="Send" />
+			</fieldset>
+		</form>
+		
+		<footer>
+			<p class="credits">
+				Ringo.js + jQuery Chat Demo by <a href="https://github.com/kyungw00k/ringo-chat">Kyungwook Park</a> (For NodeJS User : <a href="http://scottgonzalez.com">Scott González</a>) <span class="pipe">|</span>
+				User Interface by <a href="http://dougneiner.com">Doug Neiner</a>
+			</p>
+		</footer>
+	</section>
+	<![endif]>
+	<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-20092249-2']);
+	_gaq.push(['_trackPageview']);
 
- <b style="background: #DDEEFF; color: inherit; overflow:hidden; font-size:1px; display:block;height:1px;border-style: solid; border-width: 0 1px;border-left-color: #fff;border-right:1px solid #ddd;margin:0 2px;"></b>
- <b style="background: #DDEEFF; color: inherit; overflow:hidden; font-size:1px; display:block;border-style: solid; border-width: 0 1px; border-left-color: #fff; border-right:1px solid #aaa;margin:0 1px; height:2px;"></b>
- <div style="background: #DDEEFF; color: inherit; padding: 0 4px; display:block;border-style: solid; border-width: 0 1px;border-left-color: #fff;border-right-color: #999;">
-  <b style="height:1px; display:block; font-size:1px;"></b>
-<div style="text-align: center; font-size: 18px; padding: 7px;">
-	To use this site properly you must use one of the following browsers:	
-</div>
-<div style="width: 100%;">
-	<center>
-	<table>
-
-		<tr>
-			<td style="text-align: center; padding: 5px;">
-				<a href="http://www.getfirefox.com" style="font-size: 16px;"><img src="http://www.envoymediagroup.com/cms-images/browsers/firefox.png" border="0"></a><br><a href="http://www.getfirefox.com" style="font-size: 16px;">Firefox</a>
-			</td>
-			<td style="text-align: center; padding: 5px;">
-				<a href="http://www.google.com/chrome" style="font-size: 16px;"><img src="http://www.envoymediagroup.com/cms-images/browsers/chrome.png" border="0"></a><br><a href="http://www.google.com/chrome" style="font-size: 16px;">Chrome</a>
-			</td>
-			<td style="text-align: center; padding: 5px;">
-
-				<a href="http://www.apple.com/safari/download/" style="font-size: 16px;"><img src="http://www.envoymediagroup.com/cms-images/browsers/safari.png" border="0"></a><br><a href="http://www.apple.com/safari/download/" style="font-size: 16px;">Safari</a>
-			</td>
-			<td style="text-align: center; padding: 5px;">
-				<a href="http://www.opera.com/" style="font-size: 16px;"><img src="http://www.envoymediagroup.com/cms-images/browsers/opera.png" border="0"></a><br><a href="http://www.opera.com/" style="font-size: 16px;">Opera</a>
-			</td>
-		</tr>
-	</table>
-	</center>
-
-</div>
-<div style="text-align: center; padding: 7px;"><img src="http://www.envoymediagroup.com/cms-images/browsers/no_ie.png" alt="Don't use Internet Explorer" width="128" border="0"></div>
-<div style="text-align: center; font-size: 14px; padding: 7px;">
-	If you would like to continue at your own peril, go ahead.	
-</div>
-  <b style="height:1px; display:block; font-size:1px;"></b>
- </div>
- <b style="background: #DDEEFF; color: inherit; overflow:hidden; font-size:1px; display:block;border-style: solid; border-width: 0 1px;border-right-color: #999;border-left:1px solid #eee; margin:0 1px; height:2px;"></b>
- <b style="background: #DDEEFF; color: inherit; overflow:hidden; font-size:1px; display:block;height:1px;border-style: solid; border-width: 0 1px;border-right-color: #999;border-left:1px solid #ddd; margin:0 2px;"></b>
- <b style="background: #DDEEFF; color: inherit; overflow:hidden; font-size:1px; display:block;height:1px;border-style: solid; border-width: 0 1px;border-right-color: #999;border-left:1px solid #aaa;margin:0 3px; border-width:0 2px;"></b>
- <b style="overflow:hidden; font-size:1px; display:block;height:1px;margin:0 5px; background:#999; color: inherit;"></b>
-
-</div>  
-<![endif]-->
-<![if !IE]>
-  <header><!--<img src="images/node-chat.png" width="71" height="10" alt="Ringo Chat" />--></header>
-  
-  <form id="login">
-    <h1>Welcome to Ringo-<strong>Chat</strong></h1>
-    <p>
-      <label for="nick">Please choose a nickname:</label>
-      <input type="text" id="nick" maxlength="50" autocomplete="off" />
-    </p>
-  </form>
-  
-  <section id="channel">
-    
-    <section id="frame">
-      <div id="chat-log">
-      </div>
-    </section>
-    
-    <ul id="users" class="button_list">
-    </ul>
-    
-    <form id="entry">
-      <fieldset>
-        <p><input type="text" name="message" value="" autocomplete="off" id="message" /></p>
-        <input type="submit" value="Send" id="Send" />
-      </fieldset>
-    </form>
-    
-    <footer>
-      <p class="credits">
-        Ringo.js + jQuery Chat Demo by <a href="https://github.com/kyungw00k/ringo-chat">Kyungwook Park</a> (For NodeJS User : <a href="http://scottgonzalez.com">Scott González</a>) <span class="pipe">|</span>
-        User Interface by <a href="http://dougneiner.com">Doug Neiner</a>
-      </p>
-    </footer>
-  </section>
-<![endif]>
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-20092249-2']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+	</script>
 </body>
 </html>

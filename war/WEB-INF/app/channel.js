@@ -26,10 +26,10 @@ inherits(Channel, EventEmitter);
 
 extend(Channel.prototype, {
 	fetchFromMemcache : function() {
-		var channelCache = memcache.get("ringo-channel-info");
+		var channelCache = memcache.get("ringo-chat-history");
 		
 		if ( !channelCache ) {
-			memcache.set("ringo-channel-info", this.serialize());
+			memcache.set("ringo-chat-history", this.serialize());
 		} else {
 			this.deserialize(channelCache);
 		}
@@ -41,7 +41,7 @@ extend(Channel.prototype, {
 		this.messages = [];
 		this.callbacks = [];
 		this.sessions = {};
-		memcache.set("ringo-channel-info", this.serialize());
+		memcache.set("ringo-chat-history", this.serialize());
 	},
 	
 	serialize : function () {
@@ -76,7 +76,7 @@ extend(Channel.prototype, {
 			};
 		this.messages.push(message);
 		this.emit(type, message);
-		memcache.set("ringo-channel-info", this.serialize());
+		memcache.set("ringo-chat-history", this.serialize());
 		
 		while (this.callbacks.length > 0) {
 			this.callbacks.shift().callback([message]);
@@ -158,7 +158,7 @@ extend(Channel.prototype, {
 				this.destroySession(session);
 			}
 		}
-		memcache.set("ringo-channel-info", this.serialize());
+		memcache.set("ringo-chat-history", this.serialize());
 	}
 });
 

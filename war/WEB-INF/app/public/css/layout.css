@@ -17,7 +17,7 @@ body, #users li, #entry input[type=text], a#submit, #chat-log {
 }
 
 /* Specia Type */
-footer p.credits, #login h1 {
+footer p.credits, #login h1, header {
     font-family: "Gill Sans", "Gill Sans MT", Helvetica, Arial, sans-serif;
 }
 

@@ -57,10 +57,10 @@ $.extend(Channel.prototype, {
 		if (data && data.messages) {
 			$.each(data.messages, function(i, message) {
 				channel.lastMessageId = Math.max(channel.lastMessageId, message.id);
+				$(channel).triggerHandler(message.type, message);
 				if ( message.type == "part" && message.nick == channel.nick ) {
 					window.location = '/';
 				}
-				$(channel).triggerHandler(message.type, message);
 			});
 		}
 		// this.poll();
@@ -75,7 +75,6 @@ $.extend(Channel.prototype, {
 $.extend(Channel.prototype, {
 	join: function(nick, options) {
 		var channel = this;
-		this.nick = nick;
 		this.request("/join", {
 			type : "POST",
 			data: {
@@ -87,6 +86,7 @@ $.extend(Channel.prototype, {
 					return;
 				}
 				channel.id = data.id;
+				channel.nick = nick;
 				channel.since = data.since;
 				channel.poll();
 				
