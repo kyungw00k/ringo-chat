@@ -89,7 +89,8 @@ $.extend(Channel.prototype, {
 				channel.id = data.id;
 				channel.since = data.since;
 				channel.poll();
-
+				channel.who();
+				
 				var message = $("#message");
 				message.val("Connecting....").attr("disabled", true);
 				/*
@@ -100,6 +101,11 @@ $.extend(Channel.prototype, {
 				
 				channel.socket.onopen = function () {
 					message.val("").removeAttr("disabled").focus();
+					 setInterval(function() {
+						 channel.request("/flush", {
+							type : "POST"
+						});
+					 }, 2000);
 				};
 				channel.socket.onmessage = function(evt) {
 					var data = eval('(' + evt.data + ')')
@@ -128,6 +134,7 @@ $.extend(Channel.prototype, {
 		this.request("/part", {
 			data: { id: this.id }
 		});
+		channel.who();
 	},
 	
 	send: function(msg) {
