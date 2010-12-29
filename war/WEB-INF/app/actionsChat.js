@@ -116,13 +116,13 @@ exports.task = {
 	POST : function(request) {
 		var channel = channelSingleton.fetchFromMemcache();
 		channel.expireOldSessions();
-		taskqueue.add({url:"/chat/task",method:"POST",eta: (new Date().getTime()+(2000))});
+		taskqueue.add({url:"/chat/task",method:"POST",eta: (new Date().getTime()+(10000))});
 		return Response.json({ message : "ok" });
 	}	
 };
 
-exports.reset = function(request) {
-	var channel = channelSingleton.fetchFromMemcache();
-	channel.reset();
-	return Response.redirect('/');
-};
+//For testing only
+//exports.reset = function(request) {
+//	channelSingleton.reset();
+//	return Response.redirect('/');
+//};
