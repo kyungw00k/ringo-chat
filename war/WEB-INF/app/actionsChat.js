@@ -116,7 +116,7 @@ exports.task = {
 	POST : function(request) {
 		var channel = channelSingleton.fetchFromMemcache();
 		channel.expireOldSessions();
-		taskqueue.add({url:"/chat/task",method:"POST",eta: (new Date().getTime()+(1000))});
+		taskqueue.add({url:"/chat/task",method:"POST",eta: (new Date().getTime()+(2000))});
 		return Response.json({ message : "ok" });
 	}	
 };

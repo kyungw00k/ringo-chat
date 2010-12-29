@@ -89,7 +89,6 @@ extend(Channel.prototype, {
 		var sessions = this.sessions;
 		for ( var key in sessions ) {
 			if ( sessions[key] ) {
-				// sys.print("Send Message : "+JSON.stringify(message));
 				channelService.sendMessage(sessions[key].nick, "{messages : ["+ JSON.stringify(message) + "]}");				
 			}
 		}
@@ -129,12 +128,12 @@ extend(Channel.prototype, {
 			return;
 		}
 		
-		nick = nick.toLowerCase();
 		for (var i in this.sessions) {
-			if (this.sessions[i].nick && this.sessions[i].nick.toLowerCase() === nick) {
+			if (this.sessions[i].nick && this.sessions[i].nick === nick) {
 				return;
 			}
 		}
+
 		this.sessions[session.id] = session;
 		session.token = channelService.createChannel(nick);
 		session.since = this.appendMessage(nick, "join");

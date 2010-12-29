@@ -116,6 +116,7 @@ $.extend(Channel.prototype, {
 				};
 				channel.socket.onerror = function() {
 					message.val("Connection Error").attr("disabled", true);
+					window.location = '/';
 				};
 				channel.socket.onclose = function() {
 					message.val("Connection Close").attr("disabled", true);
