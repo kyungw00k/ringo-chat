@@ -145,7 +145,8 @@ extend(Channel.prototype, {
 			return false;
 		}
 		var eventId = this.appendMessage(this.sessions[id].nick, "part");
-		delete this.sessions[id];		
+		delete this.sessions[id];
+		memcache.set("ringo-chat-history", this.serialize());
 		return eventId;
 	},
 	
