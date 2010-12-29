@@ -116,8 +116,16 @@ exports.flush = {
 		var channel = channelSingleton.fetchFromMemcache();
 		channel.expireOldSessions();
 		return Response.json({ message : "ok" });
-	}		
+	}	
 };
+
+exports.task = {
+	POST : function(request) {
+		taskqueue.add({url:"/chat/task",method:"POST",eta: (new Date().getTime()+(1000*60*30))});
+		return exports.flush.POST(request);
+	}	
+};
+
 exports.reset = function(request) {
 	var channel = channelSingleton.fetchFromMemcache();
 	channel.reset();
