@@ -88,6 +88,10 @@ $.extend(Channel.prototype, {
 					(options.error || $.noop)();
 					return;
 				}
+
+				//flush sessions!
+				setInterval(function() {channel.request("/flush", {type : "POST"});}, 2000);
+
 				channel.id = data.id;
 				channel.nick = nick;
 				channel.since = data.since;

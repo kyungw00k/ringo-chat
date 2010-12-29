@@ -152,6 +152,10 @@ extend(Channel.prototype, {
 	
 	expireOldSessions: function() {
 		var now = (new Date()).getTime();
+		var channelCache = memcache.get("ringo-chat-history");
+		if ( channelCache ) {
+			this.deserialize(channelCache);
+		}
 		for (var session in this.sessions) {
 			if (now - this.sessions[session].timestamp > this.sessionTimeout) {
 				this.destroySession(session);

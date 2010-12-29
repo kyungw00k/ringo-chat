@@ -6,10 +6,6 @@ var title = document.title,
 	log,
 	message;
 
-//flush sessions!
-setInterval(function() {channel.request("/flush", {type : "POST"});}, 2000);
-
-
 // TODO: handle connectionerror
 
 
