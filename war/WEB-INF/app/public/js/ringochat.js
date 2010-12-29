@@ -86,9 +86,6 @@ $.extend(Channel.prototype, {
 				channel.nick = nick;
 				channel.since = data.since;
 				
-				//flush sessions!
-				setInterval(function() {channel.request("/flush", {type : "POST"});}, 5000);
-				
 				var message = $("#message");
 				message.val("Connecting....").attr("disabled", true);
 				/*
