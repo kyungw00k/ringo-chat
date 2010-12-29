@@ -55,6 +55,7 @@ exports.join = {
 		if (!nick) {
 			return Response.jsons(400, { error: "bad nick." });
 		}
+		
 		var session = channelSingleton.fetchFromMemcache().createSession(nick);
 		if (!session) {
 			return Response.jsons(400, { error: "nick in use." });

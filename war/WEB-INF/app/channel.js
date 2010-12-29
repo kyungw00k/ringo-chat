@@ -75,8 +75,7 @@ extend(Channel.prototype, {
 			};
 		this.messages.push(message);
 		this.emit(type, message);
-		memcache.set("ringo-chat-history", this.serialize());
-		
+				
 		while (this.callbacks.length > 0) {
 			this.callbacks.shift().callback([message]);
 		}
@@ -84,8 +83,14 @@ extend(Channel.prototype, {
 		while (this.messages.length > this.messageBacklog) {
 			this.messages.shift();
 		}
-		var sessions = this.sessions;
 		
+		var channelCache = memcache.get("ringo-chat-history");
+		if ( channelCache ) {
+			this.deserialize(channelCache);
+		}
+		memcache.set("ringo-chat-history", this.serialize());
+
+		var sessions = this.sessions;
 		for ( var key in sessions ) {
 			if ( sessions[key] ) {
 				// sys.print("Send Message : "+JSON.stringify(message));
@@ -134,6 +139,12 @@ extend(Channel.prototype, {
 				return;
 			}
 		}
+		var channelCache = memcache.get("ringo-chat-history");
+		if ( channelCache ) {
+			this.deserialize(channelCache);
+		}
+		memcache.set("ringo-chat-history", this.serialize());
+
 		this.sessions[session.id] = session;
 		session.token = channelService.createChannel(nick);
 		session.since = this.appendMessage(nick, "join");
@@ -144,6 +155,10 @@ extend(Channel.prototype, {
 		if (!id || !this.sessions[id]) {
 			return false;
 		}
+		var channelCache = memcache.get("ringo-chat-history");
+		if ( channelCache ) {
+			this.deserialize(channelCache);
+		}
 		var eventId = this.appendMessage(this.sessions[id].nick, "part");
 		delete this.sessions[id];
 		memcache.set("ringo-chat-history", this.serialize());
@@ -152,16 +167,11 @@ extend(Channel.prototype, {
 	
 	expireOldSessions: function() {
 		var now = (new Date()).getTime();
-		var channelCache = memcache.get("ringo-chat-history");
-		if ( channelCache ) {
-			this.deserialize(channelCache);
-		}
 		for (var session in this.sessions) {
 			if (now - this.sessions[session].timestamp > this.sessionTimeout) {
 				this.destroySession(session);
 			}
 		}
-		memcache.set("ringo-chat-history", this.serialize());
 	}
 });
 
