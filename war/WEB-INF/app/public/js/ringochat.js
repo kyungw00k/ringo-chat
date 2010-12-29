@@ -1,5 +1,4 @@
 (function($) {
-
 var ringoChat = (window.ringoChat = {
 	connect: function(basePath) {
 		return new Channel(basePath);
@@ -58,10 +57,10 @@ $.extend(Channel.prototype, {
 			$.each(data.messages, function(i, message) {
 				channel.lastMessageId = Math.max(channel.lastMessageId, message.id);
 				$(channel).triggerHandler(message.type, message);
-				if ( message.type == "part" && message.nick == channel.nick ) {
-					window.location = '/';
-				}
 			});
+		}
+		if ( this.nick == null ) {
+			window.location = '/';
 		}
 		// this.poll();
 	},
@@ -100,7 +99,6 @@ $.extend(Channel.prototype, {
 				
 				channel.socket.onopen = function () {
 					message.val("").removeAttr("disabled").focus();
-					setInterval(function() {channel.request("/flush", {type : "POST"});}, 2000);
 				};
 				channel.socket.onmessage = function(evt) {
 					var data = eval('(' + evt.data + ')')
@@ -113,11 +111,15 @@ $.extend(Channel.prototype, {
 				};
 				channel.socket.onerror = function() {
 					channel.nick = null;
+					alert("Connection Error!");
 					message.val("Connection Error!").attr("disabled", true);
+					window.location = '/';
 				};
 				channel.socket.onclose = function() {
 					channel.nick = null;
+					alert("Session Timeout!");
 					message.val("Session Timeout!").attr("disabled", true);
+					window.location = '/';
 				};
 				
 				(options.success || $.noop)();
@@ -129,7 +131,11 @@ $.extend(Channel.prototype, {
 	part: function() {
 		if (!this.id) { return; }
 		this.request("/part", {
-			data: { id: this.id }
+			data: { id: this.id },
+			success: function(data) {
+				message.val("Closed Session").attr("disabled", true);
+				window.location = '/';
+			}
 		});
 		this.nick = null;
 	},
