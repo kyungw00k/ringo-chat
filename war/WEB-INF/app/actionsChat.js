@@ -4,7 +4,8 @@ var {Response} = require('ringo/webapp/response'),
 	chat = require('./server'),
 	Session = require('./session'),
 	taskqueue = require('google/appengine/api/taskqueue'),
-	memcache = require("google/appengine/api/memcache");
+	memcache = require("google/appengine/api/memcache"),
+	log = require("ringo/logging").getLogger(module.id);
 
 /*
  * Response.json with Status Code
@@ -23,11 +24,11 @@ var chatServer = chat.createServer(),
  * Set Channel Listener
  */
 channelSingleton.addListener("msg", function(msg) {
-	sys.print("<" + msg.nick + "> " + msg.text);
+	log.info("<" + msg.nick + "> " + msg.text);
 }).addListener("join", function(msg) {
-	sys.print("<" + msg.nick + "> join");
+	log.info("<" + msg.nick + "> join");
 }).addListener("part", function(msg) {
-	sys.print("<" + msg.nick + "> part");
+	log.info("<" + msg.nick + "> part");
 });
 
 /*
