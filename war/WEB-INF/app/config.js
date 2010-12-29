@@ -34,3 +34,6 @@ exports.macros = [
 // Default character encoding and MIME type for this app
 exports.charset = 'UTF-8';
 exports.contentType = 'text/html';
+
+var taskqueue = require('google/appengine/api/taskqueue');
+taskqueue.add({url:"/chat/flush",method:"POST",countdown:1000});
