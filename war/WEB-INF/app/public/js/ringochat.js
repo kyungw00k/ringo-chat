@@ -112,10 +112,12 @@ $.extend(Channel.prototype, {
 					}
 				};
 				channel.socket.onerror = function() {
-					alert("[Channel API] Error");
+					channel.nick = null;
+					message.val("Connection Error!").attr("disabled", true);
 				};
 				channel.socket.onclose = function() {
-					channel.part();
+					channel.nick = null;
+					message.val("Session Timeout!").attr("disabled", true);
 				};
 				
 				(options.success || $.noop)();
@@ -129,7 +131,7 @@ $.extend(Channel.prototype, {
 		this.request("/part", {
 			data: { id: this.id }
 		});
-		channel.who();
+		this.nick = null;
 	},
 	
 	send: function(msg) {
