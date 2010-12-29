@@ -57,10 +57,11 @@ $.extend(Channel.prototype, {
 			$.each(data.messages, function(i, message) {
 				channel.lastMessageId = Math.max(channel.lastMessageId, message.id);
 				$(channel).triggerHandler(message.type, message);
+				if ( message.nick === channel.nick ) {
+					channel.nick = null;
+					window.location = '/';
+				}
 			});
-		}
-		if ( this.nick == null ) {
-			window.location = '/';
 		}
 		// this.poll();
 	},
