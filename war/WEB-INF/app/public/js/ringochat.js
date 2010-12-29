@@ -57,9 +57,6 @@ $.extend(Channel.prototype, {
 			$.each(data.messages, function(i, message) {
 				channel.lastMessageId = Math.max(channel.lastMessageId, message.id);
 				$(channel).triggerHandler(message.type, message);
-				if ( message.nick && message.type === "part" && message.nick === channel.nick ) {
-					channel.part();
-				}
 			});
 		}
 		// this.poll();
@@ -74,6 +71,7 @@ $.extend(Channel.prototype, {
 $.extend(Channel.prototype, {
 	join: function(nick, options) {
 		var channel = this;
+		this.nick = null;
 		this.request("/join", {
 			type : "POST",
 			data: {
@@ -84,14 +82,12 @@ $.extend(Channel.prototype, {
 					(options.error || $.noop)();
 					return;
 				}
-
-				//flush sessions!
-				setInterval(function() {channel.request("/flush", {type : "POST"});}, 2000);
-
 				channel.id = data.id;
 				channel.nick = nick;
 				channel.since = data.since;
-				channel.poll();
+				
+				//flush sessions!
+				setInterval(function() {channel.request("/flush", {type : "POST"});}, 5000);
 				
 				var message = $("#message");
 				message.val("Connecting....").attr("disabled", true);
@@ -106,11 +102,19 @@ $.extend(Channel.prototype, {
 				};
 				channel.socket.onmessage = function(evt) {
 					var data = eval('(' + evt.data + ')')
-
 					if (data) {
 						channel.handlePoll(data);
 					} else {
 						channel.handlePollError();
+					}
+					if (data && data.messages) {
+						$.each(data.messages, function(i, message) {
+							if (message.type === 'part' && message.nick == channel.nick ) {
+								channel.socket.close();
+								channel.nick = null;
+								window.location = '/';
+							}
+						});
 					}
 				};
 				channel.socket.onerror = function() {
@@ -120,6 +124,7 @@ $.extend(Channel.prototype, {
 				channel.socket.onclose = function() {
 					message.val("Connection Close").attr("disabled", true);
 				};
+				channel.poll();
 				
 				(options.success || $.noop)();
 			},
@@ -131,13 +136,7 @@ $.extend(Channel.prototype, {
 		if (!this.id) { return; }
 		var channel = this;
 		this.request("/part", {
-			data: { id: this.id },
-			success: function(data) {
-				channel.socket.close();
-				channel.gae_channel = null;
-				channel.nick = null;
-				window.location = '/';				
-			}
+			data: { id: this.id }
 		});
 	},
 	
