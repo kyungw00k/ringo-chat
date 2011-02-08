@@ -116,13 +116,9 @@ exports.task = {
 	POST : function(request) {
 		var channel = channelSingleton.fetchFromMemcache();
 		channel.expireOldSessions();
-		taskqueue.add({url:"/chat/task",method:"POST",eta: (new Date().getTime()+(10000))});
+		var db = require('google/appengine/ext/db');
+		db.runInTransaction(taskqueue.add,{url:"/chat/task",method:"POST",eta: (new Date().getTime()+(5000))});
+		// taskqueue.add({name:"ringo",url:"/chat/task",method:"POST",eta: (new Date().getTime()+(5000))});
 		return Response.json({ message : "ok" });
 	}	
 };
-
-//For testing only
-//exports.reset = function(request) {
-//	channelSingleton.reset();
-//	return Response.redirect('/');
-//};
