@@ -1,0 +1,3 @@
+[submodule "war/WEB-INF/packages/appengine"]
+	path = war/WEB-INF/packages/appengine
+	url = https://github.com/gmosx/appengine.git
