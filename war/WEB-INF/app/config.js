@@ -35,6 +35,4 @@ exports.macros = [
 exports.charset = 'UTF-8';
 exports.contentType = 'text/html';
 
-var taskqueue = require('google/appengine/api/taskqueue'),
-	db = require('google/appengine/ext/db');
-db.runInTransaction(taskqueue.add,{url:"/chat/task",method:"POST",eta: (new Date().getTime()+(5000))});
+require('google/appengine/api/taskqueue').add({url:"/chat/task",method:"POST",eta: (new Date().getTime()+(1000))});
