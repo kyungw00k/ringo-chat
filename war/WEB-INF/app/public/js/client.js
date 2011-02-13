@@ -226,7 +226,6 @@ $(function() {
 $(window).unload(function() {
 	channel.part();
 });
-
 function formatTime(timestamp) {
 	var date = new Date(timestamp),
 		hours = date.getHours(),

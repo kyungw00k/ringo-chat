@@ -34,5 +34,3 @@ exports.macros = [
 // Default character encoding and MIME type for this app
 exports.charset = 'UTF-8';
 exports.contentType = 'text/html';
-
-require('google/appengine/api/taskqueue').add({url:"/chat/task",method:"POST",eta: (new Date().getTime()+(1000))});

@@ -3,8 +3,7 @@ var EventEmitter = require("ringo/events").EventEmitter,
 	channelService = require('google/appengine/api/channel'),
 	taskqueue = require('google/appengine/api/taskqueue'),
 	sys = require('system'),
-	memcache = require("google/appengine/api/memcache"),
-	db = require('google/appengine/ext/db');
+	memcache = require("google/appengine/api/memcache");
 
 function Channel(options) {
 	EventEmitter.call(this);
@@ -32,8 +31,8 @@ extend(Channel.prototype, {
 			this.deserialize(channelCache);
 			this.expireOldSessions();
 		}
-
-		db.runInTransaction(memcache.set,"ringo-chat-history", this.serialize());
+		memcache.remove("ringo-chat-history");
+		memcache.set("ringo-chat-history", this.serialize());
 		return this;
 	},
 	
@@ -42,7 +41,8 @@ extend(Channel.prototype, {
 		this.messages = [];
 		this.callbacks = [];
 		this.sessions = {};
-		db.runInTransaction(memcache.set,"ringo-chat-history", this.serialize());
+		memcache.remove("ringo-chat-history");
+		memcache.set("ringo-chat-history", this.serialize());
 	},
 	
 	serialize : function () {
@@ -86,7 +86,8 @@ extend(Channel.prototype, {
 			this.messages.shift();
 		}
 		
-		db.runInTransaction(memcache.set,"ringo-chat-history", this.serialize());
+		memcache.remove("ringo-chat-history");
+		memcache.set("ringo-chat-history", this.serialize());
 
 		var sessions = this.sessions;
 		for ( var key in sessions ) {
@@ -147,8 +148,10 @@ extend(Channel.prototype, {
 			return false;
 		}
 		var eventId = this.appendMessage(this.sessions[id].nick, "part");
+		this.sessions[id] = null;
 		delete this.sessions[id];
-		db.runInTransaction(memcache.set,"ringo-chat-history", this.serialize());
+		memcache.remove("ringo-chat-history");
+		memcache.set("ringo-chat-history", this.serialize());
 		return eventId;
 	},
 	
