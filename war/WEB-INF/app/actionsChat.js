@@ -119,7 +119,7 @@ exports.task = {
 		
 		var queue_payload = memcache.get('queue_payload');
 		if ( queue_payload ) {
-			taskqueue.add({url:"/chat/task", method:"POST", countdown : 1});
+			taskqueue.add({url:"/chat/task", method:"POST", eta : (new Date()).getTime()+1500 });
 		}
 		return Response.json({ message : "ok" });
 	}	
