@@ -34,3 +34,10 @@ exports.macros = [
 // Default character encoding and MIME type for this app
 exports.charset = 'UTF-8';
 exports.contentType = 'text/html';
+
+var memcache = require("google/appengine/api/memcache"),
+    taskqueue = require('google/appengine/api/taskqueue');
+
+taskqueue.purge();	
+taskqueue.add({url:"/chat/task", method:"POST", eta : ((new Date()).getTime()+1000) });
+memcache.set('queue_payload', 1);

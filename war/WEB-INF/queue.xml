@@ -4,6 +4,11 @@
 		<name>default</name>
 		<rate>1/s</rate>
 		<bucket-size>1</bucket-size>
-		<max-concurrent-requests>1</max-concurrent-requests>
+		<retry-parameters>
+			<task-retry-limit>2</task-retry-limit>
+			<min-backoff-seconds>1</min-backoff-seconds>
+			<max-backoff-seconds>1</max-backoff-seconds>
+			<max-doublings>0</max-doublings>
+		</retry-parameters>
 	</queue>
 </queue-entries>
