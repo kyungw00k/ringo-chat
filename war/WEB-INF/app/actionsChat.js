@@ -120,15 +120,9 @@ exports.task = {
 		
 		var queue_payload = memcache.get('queue_payload');
 		if ( queue_payload ) {
+			memcache.set('queue_payload', 1);
 			taskqueue.add({url:"/chat/task", method:"POST", eta : (new Date()).getTime()+1000 });
 		}
 		return Response.json({ message : "ok" });
 	}	
-};
-exports.reset = function(request) {
-	var channel = channelSingleton.fetchFromMemcache();
-	channel.reset();
-	taskqueue.purge();	
-	memcache.set('queue_payload', 0);
-	return Response.json({ message : "ok" });
 };

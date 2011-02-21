@@ -38,6 +38,5 @@ exports.contentType = 'text/html';
 var memcache = require("google/appengine/api/memcache"),
     taskqueue = require('google/appengine/api/taskqueue');
 
-taskqueue.purge();	
-taskqueue.add({url:"/chat/task", method:"POST", eta : ((new Date()).getTime()+1000) });
 memcache.set('queue_payload', 1);
+taskqueue.add({url:"/chat/task", method:"POST", eta : ((new Date()).getTime()+1000) });
