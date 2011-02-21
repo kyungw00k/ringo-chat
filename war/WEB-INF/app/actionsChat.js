@@ -115,6 +115,7 @@ exports.send = {
 exports.task = {
 	POST : function(request) {
 		var channel = channelSingleton.fetchFromMemcache();
+		channel.flushCallbacks();
 		channel.expireOldSessions();
 		
 		var queue_payload = memcache.get('queue_payload');

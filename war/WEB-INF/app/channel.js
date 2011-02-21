@@ -123,6 +123,8 @@ extend(Channel.prototype, {
 		while (this.callbacks.length && now - this.callbacks[0].timestamp > this.sessionTimeout * 0.75) {
 			this.callbacks.shift().callback([]);
 		}
+		memcache.remove("ringo-chat-history");
+		memcache.set("ringo-chat-history", this.serialize());
 	},
 	
 	createSession: function(nick) {
